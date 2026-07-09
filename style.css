@@ -141,7 +141,7 @@ body[data-sound="off"] .sound-off { display: block; }
     width: 100%;
 }
 
-.view-screen.hidden {
+.hidden {
     display: none !important;
 }
 
