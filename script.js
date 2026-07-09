@@ -29,7 +29,8 @@ let state = {
     history: [], 
     timer: { seconds: 0, intervalId: null },
     soundEnabled: true,
-    theme: 'dark'
+    theme: 'dark',
+    names: { x: "Player X", o: "Player O" }
 };
 
 const safeStorage = {
@@ -307,7 +308,7 @@ const Engine = {
         const undoBtn = document.getElementById('btn-undo');
 
         if (state.isXTurn) {
-            if(statusElement) statusElement.innerText = "Player X Turn";
+            if(statusElement) statusElement.innerText = `${state.names.x} Turn`;
             if(cardX) cardX.classList.add('active-turn');
             if(cardO) cardO.classList.remove('active-turn');
             if(undoBtn) undoBtn.disabled = (state.currentMode !== GAME_MODES.MULTI || state.history.length === 0);
@@ -317,14 +318,14 @@ const Engine = {
             if(undoBtn) undoBtn.disabled = true;
 
             if (state.currentMode === GAME_MODES.SINGLE) {
-                if(statusElement) statusElement.innerText = "Computer Thinking...";
+                if(statusElement) statusElement.innerText = `${state.names.o} Thinking...`;
                 state.isGameActive = false; 
                 setTimeout(() => {
                     state.isGameActive = true;
                     this.computeComputerMove();
                 }, 500);
             } else {
-                if(statusElement) statusElement.innerText = "Player O Turn";
+                if(statusElement) statusElement.innerText = `${state.names.o} Turn`;
                 if(undoBtn) undoBtn.disabled = false;
             }
         }
@@ -372,8 +373,8 @@ const Engine = {
                 safeStorage.setItem('ttt_score_x', state.scores.x);
                 const scoreXEl = document.getElementById('score-x');
                 if (scoreXEl) scoreXEl.innerText = state.scores.x;
-                if (gameStatusEl) gameStatusEl.innerText = "Player X Wins!";
-                if(resultText) resultText.innerText = "Player X Wins!";
+                if (gameStatusEl) gameStatusEl.innerText = `${state.names.x} Wins!`;
+                if(resultText) resultText.innerText = `${state.names.x} Wins!`;
                 ConfettiEngine.spawn();
                 AudioEngine.play('win');
             } else {
@@ -383,12 +384,12 @@ const Engine = {
                 if (scoreOEl) scoreOEl.innerText = state.scores.o;
                 
                 if (state.currentMode === GAME_MODES.SINGLE) {
-                    if (gameStatusEl) gameStatusEl.innerText = "Computer Wins!";
-                    if(resultText) resultText.innerText = "Computer Wins!";
+                    if (gameStatusEl) gameStatusEl.innerText = `${state.names.o} Wins!`;
+                    if(resultText) resultText.innerText = `${state.names.o} Wins!`;
                     AudioEngine.play('lose');
                 } else {
-                    if (gameStatusEl) gameStatusEl.innerText = "Player O Wins!";
-                    if(resultText) resultText.innerText = "Player O Wins!";
+                    if (gameStatusEl) gameStatusEl.innerText = `${state.names.o} Wins!`;
+                    if(resultText) resultText.innerText = `${state.names.o} Wins!`;
                     ConfettiEngine.spawn();
                     AudioEngine.play('win');
                 }
@@ -459,6 +460,14 @@ const UIManager = {
 
         state.difficulty = safeStorage.getItem('ttt_difficulty') || DIFFICULTIES.EASY;
         if (diffSelectEl) diffSelectEl.value = state.difficulty;
+
+        state.names.x = safeStorage.getItem('ttt_name_x') || "Player X";
+        state.names.o = safeStorage.getItem('ttt_name_o') || "Player O";
+
+        const labelX = document.getElementById('label-x');
+        const labelO = document.getElementById('label-o');
+        if (labelX) labelX.innerText = state.names.x;
+        if (labelO) labelO.innerText = state.names.o;
     },
 
     bindEvents() {
@@ -475,8 +484,10 @@ const UIManager = {
             AudioEngine.init();
         });
 
-        safeBind('btn-single', 'click', () => this.launchGame(GAME_MODES.SINGLE));
-        safeBind('btn-multi', 'click', () => this.launchGame(GAME_MODES.MULTI));
+        safeBind('btn-single', 'click', () => this.showSetupScreen(GAME_MODES.SINGLE));
+        safeBind('btn-multi', 'click', () => this.showSetupScreen(GAME_MODES.MULTI));
+        safeBind('btn-setup-back', 'click', () => this.showScreen('home-screen'));
+        safeBind('btn-start-game', 'click', () => this.handleStartGame());
         safeBind('btn-back', 'click', () => this.showScreen('home-screen'));
         safeBind('btn-info-back', 'click', () => this.showScreen('home-screen'));
         safeBind('btn-how', 'click', () => this.showInfoScreen('how'));
@@ -542,14 +553,16 @@ const UIManager = {
         state.currentMode = mode;
         const diffContainer = document.getElementById('difficulty-selector-container');
         const labelO = document.getElementById('label-o');
+        const labelX = document.getElementById('label-x');
 
         if (mode === GAME_MODES.SINGLE) {
             if(diffContainer) diffContainer.classList.remove('hidden');
-            if(labelO) labelO.innerText = "Computer (O)";
         } else {
             if(diffContainer) diffContainer.classList.add('hidden');
-            if(labelO) labelO.innerText = "Player O";
         }
+
+        if(labelX) labelX.innerText = state.names.x;
+        if(labelO) labelO.innerText = state.names.o;
 
         this.showScreen('game-screen');
         this.resetMatch();
@@ -567,15 +580,20 @@ const UIManager = {
         state.history = [];
 
         const statusText = document.getElementById('game-status');
-        if(statusText) statusText.innerText = "Player X Turn";
-        
-        const logBox = document.getElementById('history-log');
-        if(logBox) logBox.innerHTML = '<p class="empty-log-msg">No moves logged yet.</p>';
-        
+        if(statusText) statusText.innerText = `${state.names.x} Turn`;
+
         const cardX = document.querySelector('.player-x-card');
         const cardO = document.querySelector('.player-o-card');
         if(cardX) cardX.classList.add('active-turn');
         if(cardO) cardO.classList.remove('active-turn');
+
+        const labelX = document.getElementById('label-x');
+        const labelO = document.getElementById('label-o');
+        if(labelX) labelX.innerText = state.names.x;
+        if(labelO) labelO.innerText = state.names.o;
+
+        const logBox = document.getElementById('history-log');
+        if(logBox) logBox.innerHTML = '<p class="empty-log-msg">No moves logged yet.</p>';
         
         const undoBtn = document.getElementById('btn-undo');
         if (undoBtn) undoBtn.disabled = true;
@@ -628,6 +646,64 @@ const UIManager = {
             `;
         }
         this.showScreen('info-screen');
+    },
+
+    showSetupScreen(mode) {
+        state.currentMode = mode;
+        const setupTitle = document.getElementById('setup-title');
+        const labelXInput = document.getElementById('label-player-x-input');
+        const inputX = document.getElementById('input-player-x');
+        const groupO = document.getElementById('player-o-input-group');
+        const inputO = document.getElementById('input-player-o');
+        const groupDiff = document.getElementById('setup-difficulty-group');
+        const selectDiff = document.getElementById('setup-difficulty-select');
+
+        if (mode === GAME_MODES.SINGLE) {
+            if (setupTitle) setupTitle.innerText = "Single Player Setup";
+            if (labelXInput) labelXInput.innerText = "Your Name";
+            if (inputX) inputX.value = state.names.x === "Player X" ? "Player" : state.names.x;
+            if (groupO) groupO.classList.add('hidden');
+            if (groupDiff) groupDiff.classList.remove('hidden');
+            if (selectDiff) selectDiff.value = state.difficulty;
+        } else {
+            if (setupTitle) setupTitle.innerText = "Multiplayer Setup";
+            if (labelXInput) labelXInput.innerText = "Player X Name";
+            if (inputX) inputX.value = state.names.x;
+            if (groupO) groupO.classList.remove('hidden');
+            if (inputO) inputO.value = state.names.o === "Computer" ? "Player O" : state.names.o;
+            if (groupDiff) groupDiff.classList.add('hidden');
+        }
+        this.showScreen('setup-screen');
+    },
+
+    handleStartGame() {
+        const inputX = document.getElementById('input-player-x');
+        const inputO = document.getElementById('input-player-o');
+        const selectDiff = document.getElementById('setup-difficulty-select');
+
+        let nameX = inputX ? inputX.value.trim() : "";
+        let nameO = inputO ? inputO.value.trim() : "";
+
+        if (state.currentMode === GAME_MODES.SINGLE) {
+            state.names.x = nameX || "Player";
+            state.names.o = "Computer";
+            state.difficulty = selectDiff ? selectDiff.value : DIFFICULTIES.EASY;
+            
+            safeStorage.setItem('ttt_name_x', state.names.x);
+            safeStorage.setItem('ttt_difficulty', state.difficulty);
+        } else {
+            state.names.x = nameX || "Player X";
+            state.names.o = nameO || "Player O";
+            
+            safeStorage.setItem('ttt_name_x', state.names.x);
+            safeStorage.setItem('ttt_name_o', state.names.o);
+        }
+
+        // Update game screen difficulty select to match
+        const gameDiffSelect = document.getElementById('difficulty-select');
+        if (gameDiffSelect) gameDiffSelect.value = state.difficulty;
+
+        this.launchGame(state.currentMode);
     }
 };
 

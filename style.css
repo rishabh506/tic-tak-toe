@@ -258,3 +258,53 @@ body[data-sound="off"] .sound-off { display: block; }
 .info-content-body h2 { margin-bottom: 8px; font-size: 1.25rem; }
 .info-content-body ul { margin-left: 15px; margin-bottom: 8px; font-size: 0.9rem; }
 .global-footer { text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; }
+
+/* ==========================================================================
+   SETUP FORM STYLES
+   ========================================================================== */
+.setup-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.input-group {
+    width: 100%;
+    text-align: left;
+}
+.input-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+.setup-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: var(--cell-bg);
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color var(--transition-speed);
+}
+.setup-input:focus {
+    border-color: var(--text-main);
+}
+.dropdown-large {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 10px;
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--card-border);
+    font-weight: 600;
+    outline: none;
+}
+.dropdown-large:focus {
+    border-color: var(--text-main);
+}

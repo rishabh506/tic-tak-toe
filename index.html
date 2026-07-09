@@ -35,6 +35,38 @@
                 </div>
             </section>
 
+            <section id="setup-screen" class="view-screen card-glass hidden">
+                <div style="width: 100%; text-align: left; margin-bottom: 20px;">
+                    <button id="btn-setup-back" class="btn btn-icon-text" aria-label="Back to home">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Home
+                    </button>
+                </div>
+                <h2 id="setup-title" class="main-title" style="font-size: 2rem;">Game Setup</h2>
+                
+                <div class="setup-form">
+                    <div id="player-x-input-group" class="input-group">
+                        <label id="label-player-x-input" for="input-player-x">Player X Name</label>
+                        <input type="text" id="input-player-x" class="setup-input" placeholder="Enter Player X Name" maxLength="15">
+                    </div>
+                    
+                    <div id="player-o-input-group" class="input-group">
+                        <label id="label-player-o-input" for="input-player-o">Player O Name</label>
+                        <input type="text" id="input-player-o" class="setup-input" placeholder="Enter Player O Name" maxLength="15">
+                    </div>
+                    
+                    <div id="setup-difficulty-group" class="input-group">
+                        <label for="setup-difficulty-select">Difficulty Level</label>
+                        <select id="setup-difficulty-select" class="dropdown-large">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard (Minimax)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button id="btn-start-game" class="btn btn-primary">Start Match</button>
+            </section>
+
             <section id="game-screen" class="view-screen card-glass hidden">
                 <div class="game-header">
                     <button id="btn-back" class="btn btn-icon-text" aria-label="Back to home">
@@ -54,7 +86,7 @@
 
                 <div class="scoreboard">
                     <div class="score-card player-x-card active-turn">
-                        <span class="score-label">Player X</span>
+                        <span id="label-x" class="score-label">Player X</span>
                         <span id="score-x" class="score-value">0</span>
                     </div>
                     <div class="score-card draw-card">
